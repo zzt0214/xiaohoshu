@@ -51,7 +51,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import PostDetail from '@/components/PostDetail.vue'
+import PostDetail from '@/views/PostDetail.vue'
 import { Picture, Star, ChatDotRound } from '@element-plus/icons-vue'
 
 // 分类数据

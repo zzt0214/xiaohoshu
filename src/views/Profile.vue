@@ -25,17 +25,126 @@
     </div>
 
     <div class="profile-tabs">
-      <div class="tab active">笔记</div>
-      <div class="tab">收藏</div>
-      <div class="tab">点赞</div>
+      <div 
+        v-for="tab in tabs" 
+        :key="tab.key"
+        :class="['tab', { active: currentTab === tab.key }]"
+        @click="currentTab = tab.key"
+      >
+        {{ tab.name }}
+      </div>
     </div>
 
-    <div class="empty-state">
+    <!-- 笔记/收藏/点赞列表 -->
+    <div v-if="currentList.length > 0" class="notes-grid">
+      <div v-for="item in currentList" :key="item.id" class="note-card" @click="showNoteDetail(item)">
+        <div class="note-image">
+          <div class="image-placeholder">
+            <el-icon><Picture /></el-icon>
+          </div>
+        </div>
+        <div class="note-content">
+          <p class="note-title">{{ item.title }}</p>
+          <div class="note-stats">
+            <span class="stat">
+              <el-icon><Star /></el-icon>
+              {{ item.likes }}
+            </span>
+            <span class="stat">
+              <el-icon><ChatDotRound /></el-icon>
+              {{ item.comments }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 空状态 -->
+    <div v-else class="empty-state">
       <div class="empty-icon">暂无内容</div>
-      <p class="empty-text">你还没有任何内容哦</p>
+      <p class="empty-text">{{ emptyText }}</p>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import { ref, computed } from 'vue'
+import { Picture, Star, ChatDotRound } from '@element-plus/icons-vue'
+
+const tabs = [
+  { key: 'notes', name: '笔记' },
+  { key: 'collections', name: '收藏' },
+  { key: 'likes', name: '点赞' }
+]
+
+const currentTab = ref('notes')
+
+// 模拟数据
+const notes = ref([
+  {
+    id: 1,
+    title: '超级好吃的美食分享',
+    image: 'https://example.com/image1.jpg',
+    likes: '1.2w',
+    comments: '399'
+  },
+  {
+    id: 2,
+    title: '周末遇到的美好风景',
+    image: 'https://example.com/image2.jpg',
+    likes: '2.3k',
+    comments: '125'
+  }
+])
+
+const collections = ref([
+  {
+    id: 3,
+    title: '超实用的穿搭技巧',
+    image: 'https://example.com/image3.jpg',
+    likes: '3.4k',
+    comments: '234'
+  }
+])
+
+const likes = ref([
+  {
+    id: 4,
+    title: '年度必看电影推荐',
+    image: 'https://example.com/image4.jpg',
+    likes: '5.6k',
+    comments: '567'
+  }
+])
+
+// 根据当前标签页显示对应列表
+const currentList = computed(() => {
+  switch (currentTab.value) {
+    case 'collections':
+      return collections.value
+    case 'likes':
+      return likes.value
+    default:
+      return notes.value
+  }
+})
+
+// 根据当前标签页显示对应空状态文本
+const emptyText = computed(() => {
+  switch (currentTab.value) {
+    case 'collections':
+      return '还没有收藏任何笔记哦'
+    case 'likes':
+      return '还没有点赞任何笔记哦'
+    default:
+      return '还没有发布任何笔记哦'
+  }
+})
+
+const showNoteDetail = (note: any) => {
+  console.log('查看笔记详情:', note)
+}
+</script>
 
 <style scoped>
 .profile {
@@ -130,6 +239,77 @@
 }
 
 .empty-text {
+  font-size: 14px;
+}
+
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.note-card {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  cursor: pointer;
+  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.note-card:hover {
+  transform: translateY(-4px);
+}
+
+.note-image {
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.image-placeholder {
+  width: 100%;
+  height: 100%;
+  background: #f6f6f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-placeholder .el-icon {
+  font-size: 32px;
+  color: #ddd;
+}
+
+.note-content {
+  padding: 12px;
+}
+
+.note-title {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.note-stats {
+  display: flex;
+  gap: 16px;
+  color: #999;
+  font-size: 12px;
+}
+
+.stat {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat .el-icon {
   font-size: 14px;
 }
 </style>

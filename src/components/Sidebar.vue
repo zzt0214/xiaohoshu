@@ -12,11 +12,11 @@
         <el-icon><House /></el-icon>
         <span>发现</span>
       </div>
-      <div class="nav-item">
+      <div class="nav-item" @click="openPublishDialog">
         <el-icon><Plus /></el-icon>
         <span>发布</span>
       </div>
-      <div class="nav-item">
+      <div class="nav-item" @click="navigateTo('/notification')">
         <el-icon><Bell /></el-icon>
         <span>通知</span>
       </div>
@@ -38,6 +38,7 @@
       </div>
     </div>
     <Login ref="loginRef" @login-success="handleLoginSuccess" />
+    <Publish ref="publishRef" />
   </aside>
 </template>
 
@@ -46,6 +47,7 @@ import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { House, Plus, Bell, More } from '@element-plus/icons-vue'
 import Login from '../views/Login.vue'
+import Publish from '../views/Publish.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -71,6 +73,16 @@ const handleLoginSuccess = (userData: any) => {
 
 const goToProfile = () => {
   router.push('/profile')
+}
+
+const publishRef = ref()
+
+const openPublishDialog = () => {
+  if (!isLoggedIn.value) {
+    openLoginDialog()
+    return
+  }
+  publishRef.value?.show()
 }
 </script>
 
